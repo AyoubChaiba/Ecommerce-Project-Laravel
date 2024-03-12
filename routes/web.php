@@ -20,3 +20,4 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/','index')->name('login');
     });
 });
+
