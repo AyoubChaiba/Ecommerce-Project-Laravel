@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 class adminController extends Controller
 {
     public function index () {
-        return view('admin.login');
+        return view('admin.pages.login');
     }
     public function login (Request $request) {
         $validator = Validator::make($request->all(),[
@@ -23,7 +23,7 @@ class adminController extends Controller
             } else {
                 return redirect()->route('admin.show')->with('error','email and password is incorrect');
             };
-        }else {
+        } else {
             return redirect()->route('admin.show')
                 ->withErrors($validator)
                 ->withInput($request->only('email'));

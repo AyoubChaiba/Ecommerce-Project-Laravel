@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class homeAdminController extends Controller
 {
     public function index() {
-        return view('admin.dashboard');
+        return view('admin.pages.dashboard');
     }
 
     public function logOut() {
