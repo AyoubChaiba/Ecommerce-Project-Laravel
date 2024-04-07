@@ -1,4 +1,4 @@
-@extends('admin.layout.loginMastar')
+@extends('admin.layout.login')
 
 @section('title')
 	login Administrative

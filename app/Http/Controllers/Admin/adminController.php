@@ -19,7 +19,12 @@ class adminController extends Controller
         ]);
         if ($validator->passes()) {
             if (Auth::guard('admin')->attempt(["email" => $request->email, "password" => $request->password,])) {
-                return redirect()->route('admin.dashboard')->with('session','welcome administration');
+                if (Auth::guard('admin')->user()->role == 2) {
+                    return redirect()->route('admin.dashboard')->with('session','welcome administration');
+                } else {
+                    Auth::guard('admin')->logout();
+                    return redirect()->route('admin.show')->with('error','you are not admin');
+                }
             } else {
                 return redirect()->route('admin.show')->with('error','email and password is incorrect');
             };

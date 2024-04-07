@@ -35,6 +35,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::group(["middleware" => "admin.auth"], function () {
         Route::get('/dashboard', [HomeAdminController::class, "index"])->name('admin.dashboard');
         Route::get('/logOut', [HomeAdminController::class, "logout"])->name('admin.logOut');
+
+        // category routes
         Route::group(['prefix' => 'category'], function () {
             Route::get('/', [CategoriesController::class, 'index'])->name('category.index');
             Route::get('/create', [CategoriesController::class, 'create'])->name('category.create');
@@ -43,6 +45,8 @@ Route::group(['prefix' => 'admin'], function () {
             Route::put('/{id}', [CategoriesController::class, 'update'])->name('category.update');
             Route::delete('/{id}', [CategoriesController::class, 'delete'])->name('category.delete');
         });
+
+        // sub category routes
         Route::group(['prefix' => 'sub-category'], function () {
             Route::get('/', [subCategoryController::class, 'index'])->name('sub-category.index');
             Route::get('/create', [subCategoryController::class, 'create'])->name('sub-category.create');

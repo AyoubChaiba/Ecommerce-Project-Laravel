@@ -1,4 +1,4 @@
-@extends('admin.layout.mastar')
+@extends('admin.layout.app')
 
 @section("title")
     dashboard
@@ -70,5 +70,6 @@
             </section>
         </div>
 @endsection
+
 
 
