@@ -4,7 +4,9 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\TempImages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Session;
@@ -37,6 +39,16 @@ class categoriesController extends Controller
             $category->slug = $request->slug;
             $category->status = $request->status;
             $category->save();
+            if (isset($request->image_id)) {
+                $tempIamge = TempImages::find($request->image_id);
+                // $name  = last(explode('.', $tempIamge->name));
+                $sPath = public_path().'/temp/'.$tempIamge->name;
+                $dPath = public_path().'/uploads/category/'.$request->image_id.'-'.$tempIamge->name;
+                File::copy($sPath, $dPath);
+                $category->image = $request->image_id.'-'.$tempIamge->name;
+                $category->save();
+            }
+
             Session::flash('success', 'The category was successfully added.');
             return response()->json([
                 'status' => true,
@@ -57,31 +69,64 @@ class categoriesController extends Controller
     }
 
     public function update (Request $request, $id) {
+        $category = Category::find($id);
+        if (empty($category)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Category not found',
+            ]);
+        }
         $validator = Validator::make($request->all(),[
-            "name" => "required|unique:categories,name,$id",
-            "slug" => "required|unique:categories,slug,$id",
+            "name" => "required",
+            "slug" => "required|unique:categories,slug," . $category->id,
         ]);
+        $validator->after(function ($validator) use ($request) {
+            $slug = $request->slug;
+            $generatedSlug = Str::slug($slug);
+            if ($slug !== $generatedSlug) {
+                $validator->errors()->add('slug', 'The slug format is invalid.');
+            }
+        });
         if ($validator->passes()) {
-            $category = Category::find($id);
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status;
-            if ($request->hasFile('image')){
-                $category->image =  $this->uploadimage($request);
-            }
             $category->save();
-            return redirect()->route('category.index')->with('success','category updated successfully');
+            $oldImage = $category->image ;
+            if (isset($request->image_id)) {
+                $tempIamge = TempImages::find($request->image_id);
+                $sPath = public_path().'/temp/'.$tempIamge->name;
+                $dPath = public_path().'/uploads/category/'.$request->image_id.'-'.$tempIamge->name;
+                File::copy($sPath, $dPath);
+                $category->image = $request->image_id.'-'.$tempIamge->name;
+                $category->save();
+                File::delete(public_path().'/uploads/category/'.$oldImage);
+            }
+            Session::flash('success', 'The category was successfully update.');
+            return response()->json([
+                'status' => true,
+                'message' => 'Category update successfully',
+            ]);
         } else {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors()
+            ]);
         };
     }
     public function delete ($id) {
         $category = Category::find($id);
+        if (empty($category)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Category not found',
+            ]);
+        }
         $category->delete();
-        return redirect()->route('category.index')->with('success','category deleted successfully');
+        return response()->json([
+            'status' => true,
+            'message' => 'Category deleted successfully.',
+        ]);
     }
 
-    private function uploadimage(Request $request){
-        return $request->file('image')->store('images' ,'public');
-    }
 }

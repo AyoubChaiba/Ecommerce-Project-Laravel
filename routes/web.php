@@ -6,6 +6,7 @@ use App\Http\Controllers\admin\categoriesController;
 use App\Http\Controllers\admin\homeAdminController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\subCategoryController;
+use App\Http\Controllers\admin\TempImagesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,6 +47,9 @@ Route::group(['prefix' => 'admin'], function () {
             Route::delete('/{id}', [CategoriesController::class, 'delete'])->name('category.delete');
         });
 
+        // Tamp image
+        Route::post('temp-image', [TempImagesController::class, 'index'])->name('temp-image');
+
         // sub category routes
         Route::group(['prefix' => 'sub-category'], function () {
             Route::get('/', [subCategoryController::class, 'index'])->name('sub-category.index');
@@ -55,6 +59,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::put('/{id}', [subCategoryController::class, 'update'])->name('sub-category.update');
             Route::delete('/{id}', [subCategoryController::class, 'delete'])->name('sub-category.delete');
         });
+
         Route::group(['prefix' => 'brands'], function () {
             Route::get('/', [BrandsController::class, 'index'])->name('brands.index');
             Route::get('/create', [BrandsController::class, 'create'])->name('brands.create');
@@ -63,6 +68,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::put('/{id}', [BrandsController::class, 'update'])->name('brands.update');
             Route::delete('/{id}', [BrandsController::class, 'destroy'])->name('brands.delete');
         });
+
         Route::group(['prefix' => 'products'], function () {
             Route::get('/', [ProductController::class, 'index'])->name('products.index');
             Route::get('/create', [ProductController::class, 'create'])->name('products.create');
