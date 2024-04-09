@@ -34,7 +34,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/', [AdminController::class, 'login'])->name('admin.login');
     });
     Route::group(["middleware" => "admin.auth"], function () {
+
+        // dashboard route
         Route::get('/dashboard', [HomeAdminController::class, "index"])->name('admin.dashboard');
+
+        // logout
         Route::get('/logOut', [HomeAdminController::class, "logout"])->name('admin.logOut');
 
         // category routes

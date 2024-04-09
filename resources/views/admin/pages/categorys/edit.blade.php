@@ -7,7 +7,7 @@
     @include("admin.partiels.content-header",['text' => 'Edite Category'])
     <section class="content">
         <div class="container-fluid">
-            <form action="{{ route('category.update', $category->id) }}" method="POST" id="category" name="category">
+            <form  method="POST" id="category" name="category">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -94,7 +94,6 @@
                                 window.location.href = "{{ route('category.index') }}";
                             }
                         })
-                        // $('.dropzone').dropzone.removeAllFiles(true);
                     }
                 },
                 error: function(error){

@@ -15,10 +15,10 @@ class categoriesController extends Controller
 {
     public function index() {
         $categories = Category::orderBy('created_at','DESC')->paginate(10);
-        return view('admin.pages.categories.list', compact('categories'));
+        return view('admin.pages.categorys.list', compact('categories'));
     }
     public function create() {
-        return view('admin.pages.categories.create');
+        return view('admin.pages.categorys.create');
     }
     public function store(Request $request)
     {
@@ -65,16 +65,16 @@ class categoriesController extends Controller
 
     public function edit ($id) {
         $category = Category::find($id);
-        return view('admin.pages.categories.edit', compact('category'));
+        if (empty($category)){
+            return redirect()->route('category.index')->with('error','category not found.');
+        }
+        return view('admin.pages.categorys.edit', compact('category'));
     }
 
     public function update (Request $request, $id) {
         $category = Category::find($id);
-        if (empty($category)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Category not found',
-            ]);
+        if (empty($category)){
+            return redirect()->route('category.index')->with('error','category not found.');
         }
         $validator = Validator::make($request->all(),[
             "name" => "required",
@@ -116,13 +116,11 @@ class categoriesController extends Controller
     }
     public function delete ($id) {
         $category = Category::find($id);
-        if (empty($category)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Category not found',
-            ]);
+        if (empty($category)){
+            return redirect()->route('category.index')->with('error','category not found.');
         }
         $category->delete();
+        File::delete(public_path().'/uploads/category/'.$category->image);
         return response()->json([
             'status' => true,
             'message' => 'Category deleted successfully.',

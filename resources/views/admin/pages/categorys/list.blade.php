@@ -22,6 +22,9 @@
                 @if (Session::has('success'))
                     <x-alert type="success" >{{ session('success') }}</x-alrt>
                 @endif
+                @if (Session::has('error'))
+                    <x-alert type="warning" >{{ session('error') }}</x-alrt>
+                @endif
                 <div class="card">
                     <div class="card-header">
                         <div class="card-tools">
@@ -81,6 +84,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        @if(empty($categories))
+                            <div class="text-center my-4">not found eny catgory</div>
+                        @endif
                     </div>
                     <div class="card-footer clearfix">
                         {{ $categories->links() }}

@@ -1,5 +1,7 @@
 @extends('admin.layout.app')
 
+@section('title', 'List sub categories')
+
 @section('main')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -16,6 +18,9 @@
             </div>
             @if (Session::has('success'))
                 <x-alert type="success" >{{ session('success') }}</x-alrt>
+            @endif
+            @if (Session::has('error'))
+                <x-alert type="warning" >{{ session('error') }}</x-alrt>
             @endif
             <!-- /.container-fluid -->
         </section>
@@ -74,15 +79,11 @@
                                                     </svg>
                                                 </button>
                                             </a>
-                                            <form action="{{ route('sub-category.delete', $item->id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this category?')">
-                                                @method('DELETE')
-                                                @csrf
-                                                <button type="submit" class="btn btn-link">
-                                                    <svg class="filament-link-icon w-4 h-4 mr-1 text-danger" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                                    </svg>
-                                                </button>
-                                            </form>
+                                            <button class="btn btn-link" id="delete" data-id="{{ $item->id }}" >
+                                                <svg class="filament-link-icon w-4 h-4 mr-1 text-danger" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -98,4 +99,44 @@
         </section>
         <!-- /.content -->
     </div>
+@endsection
+@section('customJS')
+    <script>
+        $('.table').on('click', '#delete', function () {
+            const id = $(this).data('id');
+            const obj = $(this).parent().parent();
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('sub-category.delete', ':id') }}".replace(':id', id),
+                        type: 'DELETE',
+                        dataType: 'json',
+                        success: function(data) {
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: data['message'],
+                                icon: "success"
+                            });
+                            obj.remove();
+                        },
+                        error: function(data) {
+                            Swal.fire({
+                                title: "Failed!",
+                                text: "Failed to delete sub category.",
+                                icon: "error"
+                            });
+                        }
+                    })
+                }
+            });
+        })
+    </script>
 @endsection

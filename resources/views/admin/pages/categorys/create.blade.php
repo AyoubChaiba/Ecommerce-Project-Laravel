@@ -84,7 +84,7 @@
                             icon:'success',
                             title: data['message'],
                             showConfirmButton: false,
-                            timer: 1500,
+                            timer: 500,
                             timerProgressBar: true,
                             didClose: () => {
                                 window.location.href = "{{ route('category.index') }}";

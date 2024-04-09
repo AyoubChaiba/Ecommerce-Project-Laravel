@@ -1,5 +1,7 @@
 @extends('admin.layout.app')
 
+@section('title', 'Create product')
+
 @section('main')
 <div class="content-wrapper">
     @include("admin.partiels.content-header",['text' => 'Create Products'])

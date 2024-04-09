@@ -32,47 +32,62 @@ class BrandsController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(),[
-            "name" => "required|unique:brands,name",
+            "name" => "required",
             "slug" => "required|unique:brands,slug",
         ]);
         if ($validator->passes()) {
-            $category = new Brands();
-            $category->name = $request->name;
-            $category->slug = $request->slug;
-            $category->status = $request->status;
-            if ($request->hasFile('image')){
-                $category->image =  $this->uploadimage($request);
-            }
-            $category->save();
-            return redirect()->route('brands.index')->with('success','brands added successfully');
+            $brands = new Brands();
+            $brands->name = $request->name;
+            $brands->slug = $request->slug;
+            $brands->status = $request->status;
+            $brands->save();
+            return response()->json([
+                'status' => true,
+                'message' => 'brands added successfully',
+            ]);
         } else {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors(),
+            ]);
         };
     }
     public function edit(string $id)
     {
         $brand = Brands::find($id);
+        if (empty($brand)){
+            return redirect()->route('brands.index')->with('error','brand not found.');
+        }
         return view('admin.pages.brands.edit', compact('brand'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
+        $brand = Brands::find($id);
+        if (empty($brand)){
+            return redirect()->route('brands.index')->with('error','brand not found.');
+        }
         $validator = Validator::make($request->all(),[
-            "name" => "required|unique:categories,name,$id",
-            "slug" => "required|unique:categories,slug,$id",
+            "name" => "required",
+            "slug" => "required|unique:categories,slug," . $brand->id,
         ]);
         if ($validator->passes()) {
-            $brands = Brands::find($id);
-            $brands->name = $request->name;
-            $brands->slug = $request->slug;
-            $brands->status = $request->status;
-            $brands->save();
-            return redirect()->route('brands.index')->with('success','brands updated successfully');
+            $brand->name = $request->name;
+            $brand->slug = $request->slug;
+            $brand->status = $request->status;
+            $brand->save();
+            return response()->json([
+                'status' => true,
+                'message' => 'brands updated successfully',
+            ]);
         } else {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors(),
+            ]);
         };
     }
 
@@ -82,7 +97,14 @@ class BrandsController extends Controller
     public function destroy(string $id)
     {
         $brands = Brands::find($id);
+        if (empty($brands)){
+            return redirect()->route('sub-category.index')->with('error','brand not found.');
+        }
         $brands->delete();
-        return redirect()->route('brands.index')->with('success','brands deleted successfully');
+        return response()->json([
+            'status' => true,
+            'message' => 'Brand deleted successfully.',
+        ]);
     }
+
 }
