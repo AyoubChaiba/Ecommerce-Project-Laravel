@@ -64,6 +64,7 @@ Route::group(['prefix' => 'admin'], function () {
             Route::delete('/{id}', [subCategoryController::class, 'delete'])->name('sub-category.delete');
         });
 
+        // brands routes
         Route::group(['prefix' => 'brands'], function () {
             Route::get('/', [BrandsController::class, 'index'])->name('brands.index');
             Route::get('/create', [BrandsController::class, 'create'])->name('brands.create');
@@ -73,9 +74,11 @@ Route::group(['prefix' => 'admin'], function () {
             Route::delete('/{id}', [BrandsController::class, 'destroy'])->name('brands.delete');
         });
 
+        // products routes
         Route::group(['prefix' => 'products'], function () {
             Route::get('/', [ProductController::class, 'index'])->name('products.index');
             Route::get('/create', [ProductController::class, 'create'])->name('products.create');
+            Route::get('/subcategory', [ProductController::class, 'productSubcategory'])->name('get.subcategory');
             Route::post('/', [ProductController::class, 'store'])->name('products.store');
             Route::get('/{id}', [ProductController::class, 'edit'])->name('products.edit');
             Route::put('/{id}', [ProductController::class, 'update'])->name('products.update');

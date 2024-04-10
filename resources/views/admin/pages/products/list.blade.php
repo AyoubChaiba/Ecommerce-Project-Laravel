@@ -7,7 +7,7 @@
             <div class="container-fluid my-2">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Sub Categories</h1>
+                        <h1>Products</h1>
                     </div>
                     <div class="col-sm-6 text-right">
                         <a href="{{ route('products.create') }}" class="btn btn-primary">New Product</a>
@@ -58,7 +58,7 @@
                                     <tr>
                                         <td>{{ $item->id }}</td>
                                         <td><img src="img/product-1.jpg" class="img-thumbnail" width="50" ></td>
-                                        <td><a href="#">{{ $item->name }}</a></td>
+                                        <td><a href="#">{{ $item->title }}</a></td>
                                         <td>{{ $item->price }}</td>
                                         <td>{{ $item->qty }}</td>
                                         <td>{{ $item->sku }}</td>
