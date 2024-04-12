@@ -167,7 +167,7 @@
                     </div>
                 </div>
                 <div class="pb-5 pt-3">
-                    <button class="btn btn-primary">Create</button>
+                    <button class="btn btn-primary" id="btn-submit">Create</button>
                     <a href="{{ route("products.index") }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </form>
@@ -222,7 +222,7 @@
                 dataType: "json",
                 success: function(data){
                     if (!data.status) {
-                        $('#btn-submit').prop('disabled', true);
+                        // $('#btn-submit').prop('disabled', true);
                         ['title', 'slug', 'price', 'sku', 'track_qty', 'category', 'is_featured', 'qty'].forEach(element => {
                             const error = data.errors[element];
                             if (error) {
@@ -256,7 +256,6 @@
             })
         })
         $("#title").change(function(e){
-            $('#btn-submit').prop('disabled', false);
             const name = $(this).val();
             const slug = name.toLowerCase()
                 .replace(/\s+/g, '-')
@@ -279,7 +278,7 @@
             success: function(file, response) {
                 const img = document.createElement('input');
                 img.type = 'hidden';
-                img.name = 'image_id[]';
+                img.name = 'images_id[]';
                 img.value = response.image_id;
                 img.setAttribute('data-img', file.name);
                 $("#gallery-image").append(img);

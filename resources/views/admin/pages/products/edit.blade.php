@@ -39,9 +39,8 @@
                         </div>
                         <div class="card mb-3">
                             <div class="card-body">
-                                <div class="mb-3">
+                                <div class="mb-3" id="gallery-image">
                                     <label for="status">image</label>
-                                    <input type="hidden" id="image_id" name="image_id" value="">
                                     <div id="image" class="dropzone dz-clickable">
                                         <div class="dz-message needsclick">
                                             <br>Drop files here or click to upload.<br><br>
@@ -127,7 +126,7 @@
                                     <select name="category" id="category" class="form-control">
                                         <option value="">selecte a category</option>
                                         @foreach ($categorys as $category)
-                                            <option {{ $product->category == 0 ? "selected" : "" }}  value="{{ $category->id }}">{{ $category->name }}</option>
+                                            <option {{ $product->category_id == $category->id ? "selected" : "" }}  value="{{ $category->id }}">{{ $category->name }}</option>
                                         @endforeach
                                     </select>
                                     <p></p>
@@ -136,6 +135,10 @@
                                     <label for="category">Sub category</label>
                                     <select name="sub_category" id="sub_category" class="form-control">
                                         <option value="">selecte a sub category</option>
+                                        @foreach ($sub_categorys as $sub_category)
+                                            <option {{ $product->sub_category_id == $sub_category->id ? "selected" : "" }}  value="{{ $sub_category->id }}">{{ $sub_category->name }}</option>
+                                        @endforeach
+                                        sub_category
                                     </select>
                                 </div>
                             </div>
@@ -168,7 +171,7 @@
                     </div>
                 </div>
                 <div class="pb-5 pt-3">
-                    <button class="btn btn-primary">Update</button>
+                    <button class="btn btn-primary" id="btn-submit">Update</button>
                     <a href="{{ route("products.index") }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
             </form>
@@ -226,7 +229,6 @@
                 dataType: "json",
                 success: function(data){
                     if (!data.status) {
-                        $('#btn-submit').prop('disabled', true);
                         ['title', 'slug', 'price', 'sku', 'track_qty', 'category', 'is_featured', 'qty'].forEach(element => {
                             const error = data.errors[element];
                             if (error) {
@@ -252,7 +254,11 @@
                     }
                 },
                 error: function(error){
-                    console.log(error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Something went wrong!",
+                    });
                 },
                 complete: function(){
                     $('#btn-submit').text('Update');
@@ -260,7 +266,6 @@
             })
         })
         $("#title").change(function(e){
-            $('#btn-submit').prop('disabled', false);
             const name = $(this).val();
             const slug = name.toLowerCase()
                 .replace(/\s+/g, '-')
@@ -271,23 +276,29 @@
             $("#slug").val(slug);
         })
         Dropzone.autoDiscover = false;
-        const dropzone = $("#image").dropzone({
-            init: function() {
-                this.on('addedfile', function(file) {
-                    if (this.files.length > 1) {
-                        this.removeFile(this.files[0]);
-                    }
-                });
-            },
-            url:  "{{ route('temp-image') }}",
-            maxFiles: 5,
+        const dropzone = new Dropzone("#image", {
+            url: "{{ route('temp-image') }}",
+            maxFiles: 10,
             paramName: 'image',
             addRemoveLinks: true,
             acceptedFiles: "image/jpeg,image/png,image/gif",
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }, success: function(file, response){
-                // $("#image_id").val(response.image_id);
+            },
+            success: function(file, response) {
+                const img = document.createElement('input');
+                img.type = 'hidden';
+                img.name = 'images_id[]';
+                img.value = response.image_id;
+                img.setAttribute('data-img', file.name);
+                $("#gallery-image").append(img);
+            },
+            removedfile: function(file) {
+                const imgId = $(`[data-img="${file.name}"]`).data('img');
+                if (imgId) {
+                    $(`input[data-img="${imgId}"]`).remove();
+                }
+                $(file.previewElement).remove();
             }
         });
     </script>

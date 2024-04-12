@@ -93,6 +93,7 @@ class categoriesController extends Controller
             $category->status = $request->status;
             $category->save();
             $oldImage = $category->image ;
+
             if (isset($request->image_id)) {
                 $tempIamge = TempImages::find($request->image_id);
                 $sPath = public_path().'/temp/'.$tempIamge->name;
@@ -102,6 +103,7 @@ class categoriesController extends Controller
                 $category->save();
                 File::delete(public_path().'/uploads/category/'.$oldImage);
             }
+
             Session::flash('success', 'The category was successfully update.');
             return response()->json([
                 'status' => true,

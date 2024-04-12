@@ -57,10 +57,16 @@
                                 @foreach ($products as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td><img src="img/product-1.jpg" class="img-thumbnail" width="50" ></td>
+                                        <td>
+                                            @if (!empty($item->product_image->first()->image))
+                                                <img src="{{ asset('uploads/product/small/'.$item->product_image->first()->image) }}" class="img-thumbnail" width="50" >
+                                            @else
+                                            <img src="{{ asset('admin-assets/img/default-150x150.png') }}" class="img-thumbnail" width="50" >
+                                            @endif
+                                        </td>
                                         <td><a href="#">{{ $item->title }}</a></td>
-                                        <td>{{ $item->price }}</td>
-                                        <td>{{ $item->qty }}</td>
+                                        <td>${{ $item->price }}</td>
+                                        <td>{{ $item->qty }} left in stock</td>
                                         <td>{{ $item->sku }}</td>
                                         <td>
                                             @if ($item->status == 1)

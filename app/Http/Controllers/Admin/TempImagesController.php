@@ -10,19 +10,24 @@ use Intervention\Image\ImageManager;
 
 class TempImagesController extends Controller
 {
+
     public function index(Request $request) {
         if ($request->hasFile('image')) {
-            $manager = new ImageManager(new Driver());
-            $imagename = time().'.'.$request->file('image')->getClientOriginalExtension();
-            $img = $manager->read($request->file('image'));
-            $img = $img->resize(300, 200);
-            $img->toJpeg(80)->save(public_path().'/temp/'.$imagename);
+            $image = $request->file('image');
+            $image_name = time().'.'.$image->getClientOriginalExtension();
             $tempImage = new TempImages;
-            $tempImage->name = $imagename;
+            $tempImage->name = $image_name;
             $tempImage->save();
+            $image->move(public_path().'/temp/',$image_name);
+
+            // $manager = new ImageManager(new Driver());
+            // $img = $manager->read($request->file('image'));
+            // $img = $img->resize(300, 200);
+            // $img->toJpeg(80)->save(public_path().'/temp/'.$imagename);
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Image saved successfully.',
+                'message' => 'Image saved and resized successfully.',
                 'image_id' => $tempImage->id,
             ]);
         }
