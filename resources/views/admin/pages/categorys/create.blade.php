@@ -36,6 +36,15 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
+                                    <label for="status">Show on home</label>
+                                    <select name="showHome" id="showHome" class="form-control">
+                                        <option value="Yes">Active</option>
+                                        <option value="No">Block</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
                                     <label for="status">image</label>
                                     <input type="hidden" id="image_id" name="image_id" value="">
                                     <div id="image" class="dropzone dz-clickable">

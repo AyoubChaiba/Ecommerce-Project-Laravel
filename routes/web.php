@@ -7,6 +7,7 @@ use App\Http\Controllers\admin\homeAdminController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\subCategoryController;
 use App\Http\Controllers\admin\TempImagesController;
+use App\Http\Controllers\front\homeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::group(['prefix' => '/'] , function() {
+    Route::get('/', [homeController::class, 'index'])->name('home.index');
+});
 
 
 Route::group(['prefix' => 'admin'], function () {
